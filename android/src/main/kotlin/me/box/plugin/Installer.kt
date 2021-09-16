@@ -44,6 +44,15 @@ class Installer(private val activity: Activity) {
         }
     }
 
+    fun onActivityResult(resultCode: Int, requestCode: Int, data: Intent?): Boolean {
+        return if (resultCode == Activity.RESULT_OK && requestCode == installRequestCode) {
+            install24(activity, apkFile, appId)
+            true
+        } else {
+            false
+        }
+    }
+
     private fun showSettingPackageInstall(activity: Activity) { // todo to test with android 26
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.d("SettingPackageInstall", ">= Build.VERSION_CODES.O")
