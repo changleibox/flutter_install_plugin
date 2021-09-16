@@ -24,23 +24,26 @@ class _MyAppState extends State<MyApp> {
           children: <Widget>[
             TextField(
               decoration: InputDecoration(
-                  hintText:
-                      'apk file path to install. Like /storage/emulated/0/demo/update.apk'),
+                hintText: 'apk file path to install. Like /storage/emulated/0/demo/update.apk',
+              ),
               onChanged: (path) => _apkFilePath = path,
             ),
+            // ignore: deprecated_member_use
             FlatButton(
-                onPressed: () {
-                  onClickInstallApk();
-                },
-                child: Text('install')),
+              onPressed: () {
+                onClickInstallApk();
+              },
+              child: Text('install'),
+            ),
             TextField(
-              decoration:
-                  InputDecoration(hintText: 'URL for app store to launch'),
+              decoration: InputDecoration(hintText: 'URL for app store to launch'),
               onChanged: (url) => _appUrl = url,
             ),
+            // ignore: deprecated_member_use
             FlatButton(
-                onPressed: () => onClickGotoAppStore(_appUrl),
-                child: Text('gotoAppStore'))
+              onPressed: () => onClickGotoAppStore(_appUrl),
+              child: Text('gotoAppStore'),
+            ),
           ],
         ),
       ),
@@ -55,8 +58,7 @@ class _MyAppState extends State<MyApp> {
     Map<PermissionGroup, PermissionStatus> permissions =
         await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
-      InstallPlugin.installApk(_apkFilePath, 'com.zaihui.installpluginexample')
-          .then((result) {
+      InstallPlugin.installApk(_apkFilePath, 'com.zaihui.installpluginexample').then((result) {
         print('install apk $result');
       }).catchError((error) {
         print('install apk error: $error');

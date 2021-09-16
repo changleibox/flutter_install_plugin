@@ -14,6 +14,7 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(new MyApp());
 
+    // ignore: deprecated_member_use
     expect(find.byType(FlatButton), findsNWidgets(2));
   });
 }
