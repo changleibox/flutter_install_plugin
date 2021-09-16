@@ -92,7 +92,7 @@ class InstallPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (mActivityPluginBinding != null && mInstaller != null) {
             mActivityPluginBinding!!.removeActivityResultListener(mInstaller!!)
         }
-        mActivityPluginBinding = null;
-        mInstaller = null;
+        mActivityPluginBinding = null
+        mInstaller = null
     }
 }
