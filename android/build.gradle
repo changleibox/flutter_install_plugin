@@ -1,5 +1,5 @@
 
-group 'com.example.installplugin'
+group 'me.box.plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {

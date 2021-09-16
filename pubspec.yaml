@@ -15,7 +15,7 @@ dependencies:
 # The following section is specific to Flutter.
 flutter:
   plugin:
-    androidPackage: com.zaihui.installplugin
+    androidPackage: me.box.plugin
     pluginClass: InstallPlugin
 
 dev_dependencies:

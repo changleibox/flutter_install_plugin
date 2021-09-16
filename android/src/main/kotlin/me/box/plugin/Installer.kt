@@ -1,4 +1,4 @@
-package com.zaihui.installplugin
+package me.box.plugin
 
 import android.app.Activity
 import android.content.Context
@@ -8,76 +8,33 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.core.content.FileProvider
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.io.FileNotFoundException
 
 /**
- * 1 获取Registrar 这个接口可以获取 context
- * 2 添加自身所需依赖
- * @property registrar Registrar
- * @constructor
+ * Created by changlei on 2021/9/16.
+ *
+ * 安装起
  */
-class InstallPlugin(private val registrar: Registrar) : MethodCallHandler {
+class Installer(private val activity: Activity) {
     companion object {
         private const val installRequestCode = 1234
         private var apkFile: File? = null
         private var appId: String? = null
-
-        @JvmStatic
-        fun registerWith(registrar: Registrar): Unit { 
-            val channel = MethodChannel(registrar.messenger(), "install_plugin")
-            val installPlugin = InstallPlugin(registrar)
-            channel.setMethodCallHandler(installPlugin)
-            registrar.addActivityResultListener { requestCode, resultCode, intent ->
-                Log.d(
-                    "ActivityResultListener",
-                    "requestCode=$requestCode, resultCode = $resultCode, intent = $intent"
-                )
-                if (resultCode == Activity.RESULT_OK && requestCode == installRequestCode) {
-                    installPlugin.install24(registrar.context(), apkFile, appId)
-                    true
-                } else
-
-                false
-            }
-        }
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
-        when (call.method) {
-            "getPlatformVersion" -> {
-                result.success("Android ${android.os.Build.VERSION.RELEASE}")
-            }
-            "installApk" -> {
-                val filePath = call.argument<String>("filePath")
-                val appId = call.argument<String>("appId")
-                Log.d("android plugin", "installApk $filePath $appId")
-                try {
-                    installApk(filePath, appId)
-                    result.success("Success")
-                } catch (e: Throwable) {
-                    result.error(e.javaClass.simpleName, e.message, null)
-                }
-            }
-            else -> result.notImplemented()
+    fun installApk(filePath: String?, currentAppId: String?) {
+        if (filePath == null) {
+            throw NullPointerException("fillPath is null!")
         }
-    }
-
-    private fun installApk(filePath: String?, currentAppId: String?) {
-        if (filePath == null) throw NullPointerException("fillPath is null!")
-        val activity: Activity =
-            registrar.activity() ?: throw NullPointerException("context is null!")
-
         val file = File(filePath)
-        if (!file.exists()) throw FileNotFoundException("$filePath is not exist! or check permission")
+        if (!file.exists()) {
+            throw FileNotFoundException("$filePath is not exist! or check permission")
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (canRequestPackageInstalls(activity)) install24(activity, file, currentAppId)
-            else {
+            if (canRequestPackageInstalls(activity)) {
+                install24(activity, file, currentAppId)
+            } else {
                 showSettingPackageInstall(activity)
                 apkFile = file
                 appId = currentAppId
@@ -86,7 +43,6 @@ class InstallPlugin(private val registrar: Registrar) : MethodCallHandler {
             installBelow24(activity, file)
         }
     }
-
 
     private fun showSettingPackageInstall(activity: Activity) { // todo to test with android 26
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -120,9 +76,15 @@ class InstallPlugin(private val registrar: Registrar) : MethodCallHandler {
      * 插件中不封装申请权限逻辑，是为了使模块功能单一，调用者可以引入独立的权限申请插件
      */
     private fun install24(context: Context?, file: File?, appId: String?) {
-        if (context == null) throw NullPointerException("context is null!")
-        if (file == null) throw NullPointerException("file is null!")
-        if (appId == null) throw NullPointerException("appId is null!")
+        if (context == null) {
+            throw NullPointerException("context is null!")
+        }
+        if (file == null) {
+            throw NullPointerException("file is null!")
+        }
+        if (appId == null) {
+            throw NullPointerException("appId is null!")
+        }
         val intent = Intent(Intent.ACTION_VIEW)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
