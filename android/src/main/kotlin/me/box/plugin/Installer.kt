@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import androidx.core.content.FileProvider
+import io.flutter.plugin.common.PluginRegistry
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -16,7 +16,7 @@ import java.io.FileNotFoundException
  *
  * 安装起
  */
-class Installer(private val activity: Activity) {
+class Installer(private val activity: Activity) : PluginRegistry.ActivityResultListener {
     companion object {
         private const val installRequestCode = 1234
         private var apkFile: File? = null
@@ -44,7 +44,7 @@ class Installer(private val activity: Activity) {
         }
     }
 
-    fun onActivityResult(resultCode: Int, requestCode: Int, data: Intent?): Boolean {
+    override fun onActivityResult(resultCode: Int, requestCode: Int, data: Intent?): Boolean {
         return if (resultCode == Activity.RESULT_OK && requestCode == installRequestCode) {
             install24(activity, apkFile, appId)
             true
